@@ -1,0 +1,36 @@
+import csv
+import random
+
+class Encoder:
+    def __init__(self):
+        self.email_to_id = {}
+        self.current_id = 1
+
+    def generate_unique_id(self):
+        return random.getrandbits(64)
+
+    def encode_emails(self, input_file, output_file, mapping_file):
+        with open(input_file, mode='r') as infile, open(output_file, mode='w', newline='') as outfile, open(mapping_file, mode='w', newline='') as mapfile:
+            reader = csv.reader(infile)
+            writer = csv.writer(outfile)
+            map_writer = csv.writer(mapfile)
+            
+            # Skip the header row
+            next(reader)
+            
+            # Write headers
+            writer.writerow(['user_id', 'product_id', 'score'])
+            map_writer.writerow(['user_email', 'user_id'])
+            
+            for row in reader:
+                user_email, product_id, score = row
+                if user_email not in self.email_to_id:
+                    unique_id = self.generate_unique_id()
+                    self.email_to_id[user_email] = unique_id
+                    map_writer.writerow([user_email, unique_id])
+                user_id = self.email_to_id[user_email]
+                writer.writerow([user_id, product_id, score])
+
+'''
+encoder = Encoder()
+encoder.encode_emails('input.csv', 'encoded_output.csv', 'mapping.csv')'''

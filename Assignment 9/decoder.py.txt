@@ -1,0 +1,35 @@
+import csv
+
+class Decoder:
+    def __init__(self, mapping_file):
+        self.id_to_email = self.load_mapping(mapping_file)
+
+    def load_mapping(self, mapping_file):
+        id_to_email = {}
+        with open(mapping_file, mode='r') as mapfile:
+            reader = csv.reader(mapfile)
+            next(reader)  # Skip the header row
+            for row in reader:
+                user_email, user_id = row
+                id_to_email[int(user_id)] = user_email
+        return id_to_email
+
+    def decode_emails(self, input_file, output_file):
+        with open(input_file, mode='r') as infile, open(output_file, mode='w', newline='') as outfile:
+            reader = csv.reader(infile)
+            writer = csv.writer(outfile)
+            
+            # Skip the header row
+            next(reader)
+            
+            # Write header
+            writer.writerow(['user_email', 'product_id', 'recommendations_score'])
+            
+            for row in reader:
+                user_id, product_id, recommendations_score = row
+                user_email = self.id_to_email[int(user_id)]
+                writer.writerow([user_email, product_id, recommendations_score])
+
+'''
+decoder = Decoder('mapping.csv')
+decoder.decode_emails('encoded_output.csv', 'decoded_output.csv')'''

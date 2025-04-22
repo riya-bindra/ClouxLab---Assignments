@@ -1,0 +1,10 @@
+from encoder import Encoder
+from decoder import Decoder
+
+# Encode the emails
+encoder = Encoder()
+encoder.encode_emails('input.csv', 'encoded_output.csv', 'mapping.csv')
+
+# Decode the emails
+decoder = Decoder('mapping.csv')
+decoder.decode_emails('encoded_output.csv', 'decoded_output.csv')
